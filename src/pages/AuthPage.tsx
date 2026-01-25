@@ -15,14 +15,31 @@ export const AuthPage = () => {
     const LoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const {data, error} = await supabase.auth.signUp({
-                email: email,
-                password: password
-            })
-            console.log(data)
-            if (error) {
-                console.error("Error:", error);
+            if (login) {
+                const {data, error} = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                })
+                if (error) {
+                    alert("Ошибка входа: " + error.message);
+                } else {
+                    console.log("Welcome!", data)
+                    navigate('./dashboard')
+                }
+            } else {
+                const {data, error} = await supabase.auth.signUp({
+                    email: email,
+                    password: password
+                })
+                console.log(data)
+                if (error) {
+                    console.error("Error:", error);
+                } else {
+                    console.log("Welcome! Enter your new password and continue!")
+                    setLogin(true);
+                }
             }
+
         } catch (error) {
             console.error(error)
         } finally {
