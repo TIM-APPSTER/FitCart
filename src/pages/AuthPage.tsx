@@ -1,4 +1,5 @@
 import {useState} from "react";
+import {Link} from "react-router-dom";
 
 export const AuthPage = () => {
     const [login, setLogin] = useState<boolean>(true);
@@ -21,7 +22,7 @@ export const AuthPage = () => {
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
     }
-    const main = <div className={"flex flex-col h-screen justify-between"}>
+    const main = <div className={"flex flex-col h-screen justify-between items-center"}>
         <button onClick={() => setLogin(true)}>Login</button>
         <button onClick={() => setLogin(false)}>Sign-Up</button>
         <form onSubmit={LoginSubmit} className={"flex flex-col justify-center items-center"}>
@@ -29,7 +30,8 @@ export const AuthPage = () => {
             <input onChange={handlePasswordChange} value={password} placeholder="Password" type="password"/>
             <input type="submit" placeholder={"Submit"} value="Submit"/>
         </form>
-        <button className={"p-4"}>Lost password</button>
+
+        <Link to="/lost-password">Lost Password?</Link>
     </div>
     return (
         <>
