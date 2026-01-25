@@ -1,7 +1,8 @@
 import {useState} from "react";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 export const AuthPage = () => {
+    const navigate = useNavigate();
     const [login, setLogin] = useState<boolean>(true);
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -15,6 +16,9 @@ export const AuthPage = () => {
         setPassword(password);
         console.log(email)
         console.log(password)
+        if (email && password) {
+            navigate("/dashboard")
+        }
     }
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(e.target.value);
