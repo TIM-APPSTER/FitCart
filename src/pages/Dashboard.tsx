@@ -7,16 +7,16 @@ export const Dashboard = () => {
     const [isLoading, setisLoading] = useState(true);
     useEffect(() => {
         const getUserEmail = async () => {
-
-
             const {data: {user}} = await supabase.auth.getUser();
             if (user) {
-                setUserEmail(data.user.email)
+                // Ошибка тут: нужно писать user.email, так как 'data' мы уже разобрали
+                setUserEmail(user.email ?? "");
             }
-            setisLoading(false)
-            console.log(isLoading)
+            setisLoading(false);
         }
 
+        // ЗАПУСКАЕМ ФУНКЦИЮ:
+        getUserEmail();
     }, [])
     return (
         <>{isLoading ? (ScreenLoader({isLoading})) : <div className={"p-4"}>
