@@ -1,5 +1,7 @@
 import {useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
+import {supabase} from "@/lib/supabase.ts";
+
 
 export const AuthPage = () => {
     const navigate = useNavigate();
@@ -10,15 +12,23 @@ export const AuthPage = () => {
         <p>Change theme</p>
         <p>Language</p>
     </div>
-    const LoginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const LoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setEmail(email);
-        setPassword(password);
-        console.log(email)
-        console.log(password)
-        if (email && password) {
-            navigate("/dashboard")
+        try {
+            const {data, error} = await supabase.auth.signUp({
+                email: email,
+                password: password
+            })
+            console.log(data)
+            if (error) {
+                console.error("Error:", error);
+            }
+        } catch (error) {
+            console.error(error)
+        } finally {
+            console.log("finished")
         }
+
     }
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(e.target.value);
