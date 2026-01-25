@@ -1,13 +1,19 @@
-import {Menu} from "./components/Menu.tsx"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthPage } from "./pages/AuthPage";
+import { Dashboard } from "./pages/Dashboard";
 
 function App() {
-
     return (
-        <div className={"flex space-between items-center justify-center"}>
-            <h1>FitCart</h1>
-            <Menu></Menu>
-        </div>
-    )
+        <BrowserRouter>
+            <Routes>
+                {/* Если путь "/", показываем страницу авторизации */}
+                <Route path="/" element={<AuthPage />} />
+
+                {/* Если путь "/dashboard", показываем дашборд */}
+                <Route path="/dashboard" element={<Dashboard />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;
