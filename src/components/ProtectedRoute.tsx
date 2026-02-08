@@ -1,32 +1,55 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom"; // Это наш "пинок" на другую страницу
+import {data, Navigate} from "react-router-dom";
 import { supabase } from "../lib/supabase";
-import { ScreenLoader } from "./ScreenLoader"; // Твой красивый лоадер
+import { ScreenLoader } from "./ScreenLoader";
 
-// Мы принимаем "children" — это то, что мы охраняем (например, Dashboard)
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+    // Состояние авторизации (null = еще не знаем, true/false = узнали)
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
+    // Новое состояние: нужно ли держать лоадер в DOM-дереве?
+    const [showLoaderDOM, setShowLoaderDOM] = useState(true);
+
+    // Новое состояние: виден ли лоадер визуально (opacity)?
+    const [isLoaderVisible, setIsLoaderVisible] = useState(true);
+
     useEffect(() => {
-        // 1. Спрашиваем у базы: "Есть кто дома?"
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            // !!session превращает объект в true (если есть) или false (если null)
+        const checkSession = async () => {
+            // Твоя искусственная задержка (чтобы успеть увидеть начало)
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            const { data: { session } } = await supabase.auth.getSession();
+            console.log("1")
             setIsAuthenticated(!!session);
-        });
+            console.log("2")
+            console.log(setIsLoaderVisible);
+            // Как только узнали статус -> начинаем анимацию исчезновения
+            setIsLoaderVisible(false);
+            console.log("3")
+            // Ждем 1 секунду (как в duration-1000), пока он растворится
+            setTimeout(() => {
+                setShowLoaderDOM(false); // Теперь удаляем его полностью
+            }, 1000);
+        };
+
+        checkSession();
     }, []);
 
-    // 2. ВАЖНО: Пока мы не знаем ответ (null), мы ОБЯЗАНЫ ждать.
-    // Иначе охранник может случайно выгнать человека, пока база просто тупит.
-    if (isAuthenticated === null) {
-        return <ScreenLoader />;
-    }
-
-    // 3. Если ответ "НЕТ" (false) — выгоняем на главную страницу ("/")
-    // replace={true} стирает историю, чтобы кнопка "Назад" не возвращала сюда
-    if (!isAuthenticated) {
+    // 1. Если не авторизован (и уже точно знаем это) -> редирект сразу
+    if (isAuthenticated === false) {
         return <Navigate to="/" replace />;
     }
 
-    // 4. Если ответ "ДА" — открываем дверь и показываем защищенный контент
-    return children;
+    // 2. Магия наложения:
+    // Мы возвращаем children (Дашборд), НО если лоадер еще нужен (showLoaderDOM),
+    // мы рендерим его ПОВЕРХ детей.
+    return (
+        <>
+            {/* Показываем контент (он будет под лоадером, пока тот не исчезнет) */}
+            {isAuthenticated && children}
+
+            {/* Лоадер висит поверх всего, пока showLoaderDOM = true */}
+            {showLoaderDOM && <ScreenLoader visible={isLoaderVisible} />}
+        </>
+    );
 };
