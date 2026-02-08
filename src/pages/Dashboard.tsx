@@ -1,29 +1,26 @@
-import {supabase} from "@/lib/supabase.ts";
-import {useState, useEffect} from "react";
-import {ScreenLoader} from "@/components/ScreenLoader.tsx";
+import { supabase } from "../lib/supabase";
+import { useState, useEffect } from "react";
+// Заметь: ScreenLoader и Navigate тут больше не нужны!
 
 export const Dashboard = () => {
     const [userEmail, setUserEmail] = useState<string>("");
-    const [isLoading, setisLoading] = useState(true);
+
     useEffect(() => {
         const getUserEmail = async () => {
-            const {data: {user}} = await supabase.auth.getUser();
+            // Мы просто берем данные, зная, что юзер точно есть
+            const { data: { user } } = await supabase.auth.getUser();
             if (user) {
-                // Ошибка тут: нужно писать user.email, так как 'data' мы уже разобрали
                 setUserEmail(user.email ?? "");
             }
-            setisLoading(false);
-        }
-
-        // ЗАПУСКАЕМ ФУНКЦИЮ:
+        };
         getUserEmail();
-    }, [])
-    return (
-        <>{isLoading ? (ScreenLoader({isLoading})) : <div className={"p-4"}>
-            <h1>Тут будет рацион</h1>
-            <h2>Hello, {userEmail}</h2>
-        </div>}
+    }, []);
 
-        </>
-    )
-}
+    return (
+        <div className="p-4">
+            <h1 className="text-2xl font-bold">Панель управления</h1>
+            <h2>Привет, {userEmail} 👋</h2>
+            <p className="mt-4">Тут будет твой рацион...</p>
+        </div>
+    );
+};

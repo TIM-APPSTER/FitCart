@@ -1,19 +1,26 @@
-import {BrowserRouter, Routes, Route} from "react-router-dom";
-import {AuthPage} from "./pages/AuthPage";
-import {Dashboard} from "./pages/Dashboard";
-import {LostPasswordPage} from "./pages/LostPasswordPage";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthPage } from "./pages/AuthPage";
+import { Dashboard } from "./pages/Dashboard";
+import { LostPasswordPage } from "./pages/LostPasswordPage";
+import { ProtectedRoute } from "./components/ProtectedRoute"; // <--- 1. Импорт
 
 function App() {
     return (
         <BrowserRouter>
             <Routes>
-                {/* Если путь "/", показываем страницу авторизации */}
-                <Route path="/" element={<AuthPage/>}/>
+                <Route path="/" element={<AuthPage />} />
 
-                {/* Если путь "/dashboard", показываем дашборд */}
-                <Route path="/dashboard" element={<Dashboard/>}/>
+                {/* 2. Оборачиваем Dashboard */}
+                <Route
+                    path="/dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    }
+                />
 
-                <Route path="/lost-password" element={<LostPasswordPage/>}/>
+                <Route path="/lost-password" element={<LostPasswordPage />} />
             </Routes>
         </BrowserRouter>
     );
